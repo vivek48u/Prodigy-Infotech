@@ -1,0 +1,170 @@
+<html >
+<head>
+<title>Tic-Tac-Toe Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(135deg, #43cea2, #185a9d);
+        color: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin-top: 20px;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+        gap: 5px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .cell {
+        background-color: rgba(255, 255, 255, 0.8);
+        font-size: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+        font-weight: bold;
+    }
+
+    .cell:hover {
+        background-color: rgba(255, 255, 255, 1);
+    }
+
+    .x {
+        color: red; /* X ka color */
+    }
+
+    .o {
+        color: blue; /* O ka color */
+    }
+
+    .status {
+        font-size: 20px;
+        margin-top: 20px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 18px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #ffcc00;
+        color: #333;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+</style>
+</head>
+<body>
+
+<h1>🎮 Tic-Tac-Toe</h1>
+<div class="board" id="board">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+</div>
+
+<div class="status" id="status">Player X's Turn</div>
+<button onclick="resetGame()">Reset Game</button>
+
+<script>
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('status');
+    let currentPlayer = 'X';
+    let gameState = ["", "", "", "", "", "", "", "", ""];
+    let isGameActive = true;
+
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    function handleCellClick(event) {
+        const cell = event.target;
+        const index = cell.getAttribute('data-index');
+
+        if (gameState[index] !== "" || !isGameActive) return;
+
+        gameState[index] = currentPlayer;
+        cell.textContent = currentPlayer;
+
+        // X aur O ka color apply karo
+        if (currentPlayer === 'X') {
+            cell.classList.add('x');
+        } else {
+            cell.classList.add('o');
+        }
+
+        checkResult();
+    }
+
+    function checkResult() {
+        let roundWon = false;
+
+        for (let condition of winningConditions) {
+            const [a, b, c] = condition;
+            if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+                roundWon = true;
+                break;
+            }
+        }
+
+        if (roundWon) {
+            statusText.textContent = `🎉 Player ${currentPlayer} Wins!`;
+            isGameActive = false;
+            return;
+        }
+
+        if (!gameState.includes("")) {
+            statusText.textContent = "🤝 It's a Draw!";
+            isGameActive = false;
+            return;
+        }
+
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusText.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function resetGame() {
+        currentPlayer = "X";
+        gameState = ["", "", "", "", "", "", "", "", ""];
+        isGameActive = true;
+        statusText.textContent = "Player X's Turn";
+        cells.forEach(cell => {
+            cell.textContent = "";
+            cell.classList.remove('x', 'o');
+        });
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+</script>
+
+</body>
+</html>
